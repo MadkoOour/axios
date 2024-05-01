@@ -13,12 +13,20 @@ class AppCC extends Component {
     };
   }
 
+  getPosts = () => {
+    api
+      .get("/")
+      .then((res) => {
+        this.setState({posts:res.data});
+        console.log("Data fitched!")
+      })
+      .catch((error) => {
+        console.log("Error fetching data:", error);
+      });
+  };
+
   componentDidMount() {
-    api.get("/").then((res) => {
-      this.setState({ posts: res.data });
-    }).catch((error) => {
-      console.log("Error fetching data:", error);
-    });
+    this.getPosts();
   }
 
   render() {

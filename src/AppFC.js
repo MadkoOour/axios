@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/posts",
+  baseURL: "http://localhost:4000/posts/",
 });
 
 function AppFC() {
@@ -11,13 +11,20 @@ function AppFC() {
   const getPosts = () => {
     api
       .get("/")
-      .then((res) => {
+      .then(res => {
         setPosts(res.data);
+        //console.log("Data fitched!");
       })
       .catch((error) => {
         console.log("Error fetching data:", error);
       });
   };
+
+  const createPost = async () => {
+    let res =await api.post("/", { id: 5, title: "Post 5", content: "Content of post 5" });
+    setPosts([...posts,res.data]);
+    console.log(res);
+};
 
   useEffect(() => {
     getPosts();
@@ -26,6 +33,7 @@ function AppFC() {
   return (
     <div>
       <h1>Posts</h1>
+      <button onClick={createPost}>Add new one</button>
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
