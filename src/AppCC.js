@@ -25,6 +25,11 @@ class AppCC extends Component {
       });
   };
 
+  deletePost = async(id)=>{
+    let data =await api.delete(`/${id}`)
+    this.getPosts();
+  }
+
   componentDidMount() {
     this.getPosts();
   }
@@ -37,6 +42,7 @@ class AppCC extends Component {
           {this.state.posts.map(post => (
             <li key={post.id}>
               <div>
+                <button onClick={()=>{this.deletePost(post.id)}}>Delete</button>
                 <h2>{post.title}</h2>
                 <p>{post.content}</p>
               </div>

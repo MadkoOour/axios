@@ -21,10 +21,21 @@ function AppFC() {
   };
 
   const createPost = async () => {
-    let res =await api.post("/", { id: 5, title: "Post 5", content: "Content of post 5" });
+    let res =await api.post("/", { id: "5", title: "Post 5", content: "Content of post 5" });
     setPosts([...posts,res.data]);
-    console.log(res);
-};
+    //getPosts();
+  };
+  
+  const deletePost = async (id) => {
+    try {
+      await api.delete(`/${id}`);
+      // Filter out the deleted post from the posts state
+      setPosts(posts.filter(post => post.id !== id));
+      console.log("Post deleted:", id);
+    } catch (error) {
+      console.log("Error deleting post:", error);
+    }
+  };
 
   useEffect(() => {
     getPosts();
@@ -38,6 +49,11 @@ function AppFC() {
         {posts.map((post) => (
           <li key={post.id}>
             <div>
+              <button
+              onClick={()=>{deletePost(post.id)}}
+              >
+                Delete
+              </button>
               <h2
                 style={{
                   backgroundColor: "#21f321",
