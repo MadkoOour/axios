@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/posts/",
+  baseURL: "http://localhost:3001/posts/",
+  headers:{
+    'X-auth-key':"token123",
+  }
 });
 
 function AppFC() {
@@ -10,7 +13,12 @@ function AppFC() {
 
   const getPosts = () => {
     api
-      .get("/")
+      .get("/",{
+        params:{
+          _limit:4,
+          _start:1, //counts from 0 
+        }
+      })
       .then(res => {
         setPosts(res.data);
         //console.log("Data fitched!");
@@ -22,20 +30,28 @@ function AppFC() {
 
   const createPost = async () => {
     let res =await api.post("/", { id: "5", title: "Post 5", content: "Content of post 5" });
-    setPosts([...posts,res.data]);
-    //getPosts();
+    //setPosts([...posts,res.data]);
+    console.log("post added:"+res.data.id);
+    getPosts();
   };
   
   const deletePost = async (id) => {
     try {
+      //console.log(typeof(id));
       await api.delete(`/${id}`);
       // Filter out the deleted post from the posts state
-      setPosts(posts.filter(post => post.id !== id));
+      //setPosts(posts.filter(post => post.id !== id));
+      getPosts();
       console.log("Post deleted:", id);
     } catch (error) {
       console.log("Error deleting post:", error);
     }
   };
+
+  const updatePost = async (id ,val)=>{
+    let data = await api.patch(`/${id}`,{title:val})
+    getPosts();
+  }
 
   useEffect(() => {
     getPosts();
@@ -58,6 +74,7 @@ function AppFC() {
                 style={{
                   backgroundColor: "#21f321",
                 }}
+                onClick={()=>updatePost(post.id,`${post.title} the new name of ${post.id}`)}
               >
                 {post.title}
               </h2>
